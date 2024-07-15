@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Avanzada</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tuicss/dist/tui.min.css">
+    <style>
+        h1 {
+            text-align: center;
+            margin-top: 0.67em;
+            margin-bottom: 0.67em;
+            color: #0f0;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .container {
+            margin: auto;
+            width: 25%;
+            padding: 10px;
+            border: 1px solid #0f0;
+            -webkit-box-shadow: 1px 1px 4px 0px rgba(176, 176, 176, 1);
+               -moz-box-shadow: 1px 1px 4px 0px rgba(176, 176, 176, 1);
+                    box-shadow: 1px 1px 4px 0px rgba(176, 176, 176, 1);
+            background-color: #111;
+            height: 450px;
+            color: #0f0;
+        }
+        .header {
+            background-color: #005;
+            padding: 10px;
+            color: #0f0;
+            text-align: center;
+        }
+        .result {
+            font-size: 24px;
+            padding: 24px 5px;
+            font-weight: 700;
+            text-align: right;
+            width: 96%;
+            border: 1px solid #0f0;
+            background-color: #003;
+            color: #0f0;
+        }
+        .first-row,
+        .second-row,
+        .third-row,
+        .fourth-row,
+        .conflict {
+            display: inline-block;
+            width: 100%;
+        }
+        .global {
+            padding: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            border-radius: 3px;
+            background-color: #005;
+            color: #0f0;
+            float: left;
+            width: 23.5%;
+            margin: 0 2px;
+        }
+        .global:hover {
+            background-color: #007;
+        }
+        .conflict .left,
+        .conflict .right {
+            float: left;
+            position: relative;
+        }
+        .left {
+            width: 74%;
+        }
+        .right {
+            width: 24%;
+        }
+        .big {
+            padding: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            border-radius: 3px;
+            background-color: #005;
+            color: #0f0;
+            float: left;
+            width: 64.5%;
+            margin: 0 2px;
+        }
+        .small {
+            padding: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            border: none;
+            border-radius: 3px;
+            background-color: #005;
+            color: #0f0;
+            float: left;
+            width: 31.5%;
+            margin: 0 2px;
+        }
+        .plus {
+            height: 105px;
+            width: 100%;
+        }
+        .green {
+            background-color: #080;
+        }
+        .red {
+            background-color: #800;
+        }
+        .grey {
+            background-color: #005;
+        }
+        .white-text {
+            color: #fff;
+        }
+        .top-margin {
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculator Design Using HTML Layout</h1>
+    <div class="container tui-window">
+        <div class="header">Calculadora</div>
+        <input type="text" class="result tui-input" id="display" readonly>
+        <div class="first-row">
+            <input type="button" name="" value="√" class="global" onclick="squareRoot()">
+            <input type="button" name="" value="(" class="global" onclick="appendNumber('(')">
+            <input type="button" name="" value=")" class="global" onclick="appendNumber(')')">
+            <input type="button" name="" value="%" class="global" onclick="chooseOperation('%')">
+        </div>
+        <div class="second-row">
+            <input type="button" name="" value="7" class="global" onclick="appendNumber('7')">
+            <input type="button" name="" value="8" class="global" onclick="appendNumber('8')">
+            <input type="button" name="" value="9" class="global" onclick="appendNumber('9')">
+            <input type="button" name="" value="/" class="global" onclick="chooseOperation('/')">
+        </div>
+        <div class="third-row">
+            <input type="button" name="" value="4" class="global" onclick="appendNumber('4')">
+            <input type="button" name="" value="5" class="global" onclick="appendNumber('5')">
+            <input type="button" name="" value="6" class="global" onclick="appendNumber('6')">
+            <input type="button" name="" value="X" class="global" onclick="chooseOperation('*')">
+        </div>
+        <div class="fourth-row">
+            <input type="button" name="" value="1" class="global" onclick="appendNumber('1')">
+            <input type="button" name="" value="2" class="global" onclick="appendNumber('2')">
+            <input type="button" name="" value="3" class="global" onclick="appendNumber('3')">
+            <input type="button" name="" value="-" class="global" onclick="chooseOperation('-')">
+        </div>
+        <div class="conflict">
+            <div class="left">
+                <input type="button" name="" value="0" class="global big" onclick="appendNumber('0')">
+                <input type="button" name="" value="." class="global small" onclick="appendNumber('.')">
+                <input type="button" name="" value="Del" class="global red small white-text top-margin" onclick="clearDisplay()">
+                <input type="button" name="" value="=" class="global green white-text big top-margin" onclick="compute()">
+            </div>
+            <div class="right">
+                <input type="button" name="" value="+" class="global grey plus" onclick="chooseOperation('+')">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentNumber = '';
+        let previousNumber = '';
+        let operation = null;
+
+        function appendNumber(number) {
+            if (currentNumber === '0' && number !== '.') {
+                currentNumber = number;
+            } else {
+                currentNumber += number;
+            }
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            display.value = currentNumber;
+        }
+
+        function clearDisplay() {
+            currentNumber = '';
+            previousNumber = '';
+            operation = null;
+            updateDisplay();
+        }
+
+        function chooseOperation(op) {
+            if (currentNumber === '') return;
+            if (previousNumber !== '') {
+                compute();
+            }
+            operation = op;
+            previousNumber = currentNumber;
+            currentNumber = '';
+        }
+
+        function compute() {
+            let computation;
+            const prev = parseFloat(previousNumber);
+            const current = parseFloat(currentNumber);
+            if (isNaN(prev) || isNaN(current)) return;
+            switch (operation) {
+                case '+':
+                    computation = prev + current;
+                    break;
+                case '-':
+                    computation = prev - current;
+                    break;
+                case '*':
+                    computation = prev * current;
+                    break;
+                case '/':
+                    computation = prev / current;
+                    break;
+                case '%':
+                    computation = prev % current;
+                    break;
+                default:
+                    return;
+            }
+            currentNumber = computation.toString();
+            operation = null;
+            previousNumber = '';
+            updateDisplay();
+        }
+
+        function squareRoot() {
+            if (currentNumber === '') return;
+            currentNumber = Math.sqrt(parseFloat(currentNumber)).toString();
+            updateDisplay();
+        }
+    </script>
+</body>
+</html>
